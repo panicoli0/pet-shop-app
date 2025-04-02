@@ -1,19 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:pets_shop/services/pet_shop_service.dart';
-import 'package:pets_shop/widgets/pet_list.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pets_shop/presentation/bloc/pet_list_bloc.dart';
+import 'package:pets_shop/presentation/bloc/pet_list_event.dart';
+import 'package:pets_shop/domain/repository/pet_repository_impl.dart';
+import 'package:pets_shop/presentation/pages/pet_list_page.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => PetShopService(),
-      child: const MyApp(),
+    MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => PetListBloc(
+            repository: PetRepositoryImpl(),
+          )..add(LoadPets()),
+        ),
+      ],
+      child: const PetShopApp(),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class PetShopApp extends StatelessWidget {
+  const PetShopApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +29,7 @@ class MyApp extends StatelessWidget {
       title: 'Pet Shop',
       home: Scaffold(
         appBar: AppBar(title: const Text('Pet Shop')),
-        body: const PetList(),
+        body: const PetListPage(),
       ),
     );
   }
