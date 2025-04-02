@@ -27,13 +27,12 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
   // ... other event handlers
   Future<void> _onSearchPets(
       SearchPets event, Emitter<PetListState> emit) async {
-    if (state is PetListLoaded) {
-      final currentState = state as PetListLoaded;
-      final filteredPets = currentState.pets
-          .where((pet) =>
-              pet.name.toLowerCase().contains(event.query.toLowerCase()))
-          .toList();
-      emit(PetListLoaded(filteredPets));
+    emit(PetListLoading());
+    try {
+      final pets = await repository.searchPets(event.query);
+      emit(PetListLoaded(pets));
+    } catch (e) {
+      emit(PetListError('Failed to search pets: $e'));
     }
   }
 

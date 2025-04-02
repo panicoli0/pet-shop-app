@@ -25,11 +25,10 @@ class PetShopApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return const MaterialApp(
       title: 'Pet Shop',
       home: Scaffold(
-        appBar: AppBar(title: const Text('Pet Shop')),
-        body: const PetListPage(),
+        body: PetListPage(),
       ),
     );
   }

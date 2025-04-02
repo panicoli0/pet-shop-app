@@ -20,7 +20,7 @@ class PetRepositoryImpl implements IPetRepository {
   @override
   Future<List<Pet>> getPets() async {
     // Simulate network delay
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(milliseconds: 300));
     return _pets;
   }
 
@@ -32,7 +32,7 @@ class PetRepositoryImpl implements IPetRepository {
 
   @override
   Future<List<Pet>> searchPets(String query) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 200));
     return _pets
         .where((pet) =>
             pet.name.toLowerCase().contains(query.toLowerCase()) ||
