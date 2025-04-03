@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pets_shop/di/injection.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_event.dart';
-import 'package:pets_shop/domain/repository/pet_repository_impl.dart';
 import 'package:pets_shop/presentation/pages/pet_list_page.dart';
 
 void main() {
+  // Initialize dependencies
+  initializeDependencies();
+
   runApp(
     MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => PetListBloc(
-            repository: PetRepositoryImpl(),
-          )..add(LoadPets()),
+          create: (context) => getIt<PetListBloc>()..add(LoadPets()),
         ),
       ],
       child: const PetShopApp(),
