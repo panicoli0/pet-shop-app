@@ -7,7 +7,7 @@ import 'package:pets_shop/presentation/bloc/pet_list_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_event.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_state.dart';
 import 'package:pets_shop/presentation/pages/pet_list_page.dart';
-import 'package:pets_shop/domain/models/pet.dart';
+import 'package:pets_shop/domain/entities_DTOs/pet_entity.dart';
 
 class MockPetListBloc extends MockBloc<PetListEvent, PetListState>
     implements PetListBloc {}
@@ -55,7 +55,8 @@ void main() {
 
     testWidgets('shows list of pets when loaded', (WidgetTester tester) async {
       final pets = [
-        Pet(
+        PetEntity(
+          id: 1,
           name: 'Buddy',
           breed: 'Golden Retriever',
           age: 3,
