@@ -1,24 +1,26 @@
 import 'package:flutter/foundation.dart';
-import 'package:pets_shop/domain/models/pet.dart';
+import 'package:pets_shop/domain/entities_DTOs/pet_entity.dart';
 
 class PetShopService extends ChangeNotifier {
-  final List<Pet> _pets = [
-    Pet(
+  final List<PetEntity> _pets = [
+    PetEntity(
+      id: 1,
       name: 'Buddy',
       breed: 'Golden Retriever',
       age: 3,
       imageUrl: 'resources/images/buddy2.jpeg',
     ),
-    Pet(
+    PetEntity(
+        id: 2,
         name: 'Whiskers',
         breed: 'Siamese',
         age: 1,
         imageUrl: 'resources/images/cat1.jpeg'),
   ];
 
-  List<Pet> get pets => _pets;
+  List<PetEntity> get pets => _pets;
 
-  void addPet(Pet pet) {
+  void addPet(PetEntity pet) {
     _pets.add(pet);
     notifyListeners(); // Important: Notify listeners of the change!
   }
