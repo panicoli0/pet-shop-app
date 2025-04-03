@@ -1,4 +1,4 @@
-import 'package:pets_shop/domain/models/pet.dart';
+import 'package:pets_shop/domain/entities_DTOs/pet_entity.dart';
 
 abstract class PetListEvent {}
 
@@ -15,6 +15,6 @@ class FilterPetsByBreed extends PetListEvent {
 }
 
 class AddPet extends PetListEvent {
-  final Pet pet;
+  final PetEntity pet;
   AddPet(this.pet);
 }

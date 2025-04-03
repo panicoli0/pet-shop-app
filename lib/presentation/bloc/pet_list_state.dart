@@ -1,4 +1,4 @@
-import 'package:pets_shop/domain/models/pet.dart';
+import 'package:pets_shop/domain/entities_DTOs/pet_entity.dart';
 
 abstract class PetListState {}
 
@@ -7,7 +7,7 @@ class PetListInitial extends PetListState {}
 class PetListLoading extends PetListState {}
 
 class PetListLoaded extends PetListState {
-  final List<Pet> pets;
+  final List<PetEntity> pets;
   PetListLoaded(this.pets);
 }
 
