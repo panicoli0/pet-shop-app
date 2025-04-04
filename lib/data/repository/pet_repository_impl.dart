@@ -1,4 +1,5 @@
 import 'package:pets_shop/data/datasources/pet_local_datasource.dart';
+import 'package:pets_shop/data/models/pet_model.dart';
 import 'package:pets_shop/domain/repository/pet_repository.dart';
 import 'package:pets_shop/domain/entities_DTOs/pet_entity.dart';
 
@@ -7,15 +8,15 @@ class PetRepositoryImpl implements IPetRepository {
 
   PetRepositoryImpl({required this.localDataSource});
 
-  final List<PetEntity> _pets = [
-    PetEntity(
+  final List<PetModel> _pets = [
+    PetModel(
       id: 1,
       name: 'Buddy',
       breed: 'Golden Retriever',
       age: 3,
       imageUrl: 'resources/images/buddy2.jpeg',
     ),
-    PetEntity(
+    PetModel(
       id: 2,
       name: 'Whiskers',
       breed: 'Siamese',
@@ -27,15 +28,12 @@ class PetRepositoryImpl implements IPetRepository {
   @override
   Future<List<PetEntity>> getPets() async {
     try {
-      // First, try to get from local cache
       final localPets = await localDataSource.getPets();
       if (localPets.isNotEmpty) {
         return localPets;
       }
 
-      // If cache is empty, get from "network" and cache it
-      await Future.delayed(const Duration(milliseconds: 300));
-      await localDataSource.cachePets(_pets);
+      // If we were getting data from an API, we would use PetModel.fromJson here
       return _pets;
     } catch (e) {
       throw Exception('Failed to get pets: $e');
@@ -43,7 +41,7 @@ class PetRepositoryImpl implements IPetRepository {
   }
 
   @override
-  Future<void> addPet(PetEntity pet) async {
+  Future<void> addPet(PetModel pet) async {
     try {
       await Future.delayed(const Duration(milliseconds: 300));
       _pets.add(pet);
