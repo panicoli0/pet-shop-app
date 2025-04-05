@@ -55,7 +55,7 @@ class PetListPage extends StatelessWidget {
                 final pet = state.pets[index];
                 return ListTile(
                   leading: CircleAvatar(
-                    backgroundImage: AssetImage(pet.imageUrl),
+                    backgroundImage: NetworkImage(pet.imageUrl),
                   ),
                   title: Text(pet.name),
                   subtitle: Text(pet.breed),
