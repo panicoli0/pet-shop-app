@@ -4,7 +4,7 @@ import 'package:pets_shop/data/models/pet_model.dart';
 
 part 'pets_service.g.dart';
 
-@RestApi(baseUrl: 'https://api.petshop.com')
+@RestApi(baseUrl: 'https://pet-shop-api-cmwz.onrender.com')
 abstract class PetService {
   factory PetService(Dio dio) = _PetService;
 
@@ -12,7 +12,7 @@ abstract class PetService {
   Future<List<PetModel>> getPets();
 
   @GET('/pets/search')
-  Future<List<PetModel>> searchPets(@Query('query') String query);
+  Future<List<PetModel>> searchPets(@Query('q') String query);
 
   @POST('/pets')
   Future<PetModel> addPet(@Body() PetModel pet);

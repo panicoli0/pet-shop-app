@@ -14,7 +14,7 @@ class _PetService implements PetService {
     this.baseUrl,
     this.errorLogger,
   }) {
-    baseUrl ??= 'https://api.petshop.com';
+    baseUrl ??= 'https://pet-shop-api-cmwz.onrender.com';
   }
 
   final Dio _dio;
@@ -61,7 +61,7 @@ class _PetService implements PetService {
   @override
   Future<List<PetModel>> searchPets(String query) async {
     final _extra = <String, dynamic>{};
-    final queryParameters = <String, dynamic>{r'query': query};
+    final queryParameters = <String, dynamic>{r'q': query};
     final _headers = <String, dynamic>{};
     const Map<String, dynamic>? _data = null;
     final _options = _setStreamType<List<PetModel>>(Options(
