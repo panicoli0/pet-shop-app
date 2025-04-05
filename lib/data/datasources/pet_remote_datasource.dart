@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'package:pets_shop/data/mocks/pets_list_mock.dart';
 import 'package:pets_shop/data/models/pet_model.dart';
+import 'package:pets_shop/data/services/pets_service.dart';
 
 abstract class IPetRemoteDataSource {
   Future<List<PetModel>> getPets();
@@ -8,15 +8,14 @@ abstract class IPetRemoteDataSource {
 }
 
 class PetRemoteDataSource implements IPetRemoteDataSource {
+  final PetService _service;
+
+  PetRemoteDataSource(this._service);
+
   @override
   Future<List<PetModel>> getPets() async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 800));
-
     try {
-      return PetsListMock.petsListJson
-          .map((json) => PetModel.fromJson(json))
-          .toList();
+      return await _service.getPets();
     } catch (e) {
       throw Exception('Failed to fetch pets: $e');
     }
@@ -24,16 +23,8 @@ class PetRemoteDataSource implements IPetRemoteDataSource {
 
   @override
   Future<List<PetModel>> searchPets(String query) async {
-    // Simulate network delay
-    await Future.delayed(const Duration(milliseconds: 500));
-
     try {
-      final allPets = await getPets();
-      return allPets
-          .where((pet) =>
-              pet.name.toLowerCase().contains(query.toLowerCase()) ||
-              pet.breed.toLowerCase().contains(query.toLowerCase()))
-          .toList();
+      return await _service.searchPets(query);
     } catch (e) {
       throw Exception('Failed to search pets: $e');
     }
