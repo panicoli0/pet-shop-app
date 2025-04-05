@@ -23,7 +23,9 @@ void initializeDependencies() {
   );
 
   getIt.registerLazySingleton<IPetRemoteDataSource>(
-    () => PetRemoteDataSource(),
+    () => PetRemoteDataSource(
+      getIt<PetService>(),
+    ),
   );
 
   // Repositories
