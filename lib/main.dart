@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pets_shop/di/injection.dart';
+import 'package:pets_shop/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_event.dart';
 import 'package:pets_shop/presentation/pages/pet_list_page.dart';
@@ -15,6 +16,9 @@ void main() {
         BlocProvider(
           create: (context) => getIt<PetListBloc>()..add(LoadPets()),
         ),
+        BlocProvider(
+          create: (context) => CartBloc(),
+        ),
       ],
       child: const PetShopApp(),
     ),
@@ -28,6 +32,7 @@ class PetShopApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const MaterialApp(
       title: 'Pet Shop',
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
         body: PetListPage(),
       ),
