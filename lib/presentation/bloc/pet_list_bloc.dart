@@ -40,7 +40,6 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
     }
   }
 
-  // ... other event handlers
   Future<void> _onFilterPetsByBreed(
       FilterPetsByBreed event, Emitter<PetListState> emit) async {
     if (state is PetListLoaded) {
@@ -60,6 +59,4 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
       emit(PetListLoaded(updatedPets));
     }
   }
-  // Add as many event handlers as needed:
-  // For example, you can add handlers for updating or deleting pets
 }
