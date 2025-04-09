@@ -98,13 +98,7 @@ class PetListPage extends StatelessWidget {
 
           return Stack(children: [
             FloatingActionButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const CartPage(),
-                  ),
-                );
-              },
+              onPressed: () => Navigator.of(context).pushNamed('/cart'),
               child: const Icon(Icons.shopping_cart),
             ),
             Positioned(
