@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pets_shop/domain/entities_DTOs/pet_entity.dart';
 import 'package:pets_shop/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_state.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_event.dart';
-import 'package:pets_shop/domain/entities_DTOs/cart_item_entity.dart';
-import 'package:pets_shop/presentation/pages/cart_page.dart';
+import 'package:pets_shop/presentation/widgets/pet_item.dart';
 
 class PetListPage extends StatelessWidget {
-  const PetListPage({super.key});
+  final Function(PetEntity)? onPetSelected;
+  final Function()? onCartTapped;
+
+  const PetListPage({
+    super.key,
+    this.onPetSelected,
+    this.onCartTapped,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -56,36 +63,7 @@ class PetListPage extends StatelessWidget {
               itemCount: state.pets.length,
               itemBuilder: (context, index) {
                 final pet = state.pets[index];
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: NetworkImage(pet.imageUrl),
-                  ),
-                  title: Text(pet.name),
-                  subtitle: Text(pet.breed),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.add_shopping_cart),
-                    onPressed: () {
-                      context.read<CartBloc>().add(
-                            AddToCart(
-                              CartItemEntity(
-                                id: pet.id,
-                                name: pet.name,
-                                description: pet.breed,
-                                price: 29.99, // Example price
-                                quantity: 1,
-                                imageUrl: pet.imageUrl,
-                              ),
-                            ),
-                          );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${pet.name} added to cart'),
-                          duration: const Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                  ),
-                );
+                return PetItem(pet: pet, onPetSelected: onPetSelected);
               },
             );
           }
@@ -98,7 +76,7 @@ class PetListPage extends StatelessWidget {
 
           return Stack(children: [
             FloatingActionButton(
-              onPressed: () => Navigator.of(context).pushNamed('/cart'),
+              onPressed: onCartTapped,
               child: const Icon(Icons.shopping_cart),
             ),
             Positioned(
