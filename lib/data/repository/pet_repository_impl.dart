@@ -56,7 +56,7 @@ class PetRepositoryImpl implements IPetRepository {
     try {
       final pets = await getPets();
       return pets
-          .where((pet) => pet.breed.toLowerCase() == breed.toLowerCase())
+          .where((pet) => pet.breed!.toLowerCase() == breed.toLowerCase())
           .toList();
     } catch (e) {
       throw Exception('Failed to filter pets by breed: $e');

@@ -45,7 +45,7 @@ class PetListBloc extends Bloc<PetListEvent, PetListState> {
     if (state is PetListLoaded) {
       final currentState = state as PetListLoaded;
       final filteredPets = currentState.pets
-          .where((pet) => pet.breed.toLowerCase() == event.breed.toLowerCase())
+          .where((pet) => pet.breed!.toLowerCase() == event.breed.toLowerCase())
           .toList();
       emit(PetListLoaded(filteredPets));
     }

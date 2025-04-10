@@ -33,8 +33,8 @@ class CartPage extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = state.items.values.toList()[index];
                   return ListTile(
-                    leading: CircleAvatar(
-                      backgroundImage: NetworkImage(item.imageUrl),
+                    leading: ClipRRect(
+                      child: Image.asset(item.imageUrl),
                     ),
                     title: Text(item.name),
                     subtitle: Text('\$${item.price.toStringAsFixed(2)}'),
