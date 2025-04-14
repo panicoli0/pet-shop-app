@@ -2,6 +2,13 @@ part of 'cart_bloc.dart';
 
 abstract class CartEvent {}
 
+class LoadCart extends CartEvent {
+  LoadCart();
+
+  @override
+  String toString() => 'LoadCart';
+}
+
 class AddToCart extends CartEvent {
   final CartItemEntity item;
   AddToCart(this.item);

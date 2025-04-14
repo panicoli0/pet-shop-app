@@ -1,84 +1,110 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:pets_shop/domain/entities_DTOs/cart_item_entity.dart';
+import 'package:pets_shop/domain/repository/cart_repository.dart';
 
 part 'cart_event.dart';
 part 'cart_state.dart';
 
 class CartBloc extends Bloc<CartEvent, CartState> {
-  CartBloc() : super(CartState()) {
+  final ICartRepository _cartRepository;
+  late final StreamSubscription _cartSubscription;
+
+  CartBloc(this._cartRepository) : super(CartState.initial()) {
+    on<LoadCart>(_onLoadCart);
     on<AddToCart>(_onAddToCart);
-    on<RemoveFromCart>(_onRemoveFromCart);
     on<UpdateQuantity>(_onUpdateQuantity);
+    on<RemoveFromCart>(_onRemoveFromCart);
     on<ClearCart>(_onClearCart);
+
+    // Auto-load cart when bloc is created
+    add(LoadCart());
+
+    // Listen to cart changes
+    _cartSubscription = _cartRepository.getCartItemsStream().listen((items) {
+      if (!isClosed) {
+        add(LoadCart());
+      }
+    });
   }
 
-  void _onAddToCart(AddToCart event, Emitter<CartState> emit) {
-    // Create a new map with deep copies of all items
-    final updatedItems = Map<int, CartItemEntity>.fromEntries(
-      state.items.entries.map(
-        (entry) => MapEntry(
-          entry.key,
-          entry.value.copyWith(),
-        ),
-      ),
-    );
+  @override
+  Future<void> close() {
+    _cartSubscription.cancel();
+    return super.close();
+  }
 
-    if (updatedItems.containsKey(event.item.id)) {
-      final existingItem = updatedItems[event.item.id]!;
-      updatedItems[event.item.id] = existingItem.copyWith(
-        quantity: existingItem.quantity + 1,
+  Future<void> _onLoadCart(LoadCart event, Emitter<CartState> emit) async {
+    try {
+      emit(state.copyWith(isLoading: true));
+      final items = await _cartRepository.getCartItems();
+
+      // Calculate total price
+      double total = items.values.fold(
+        0,
+        (sum, item) => sum + (item.price * item.quantity),
       );
-    } else {
-      updatedItems[event.item.id] = event.item;
-    }
-    emit(state.copyWith(items: updatedItems));
-  }
 
-  void _onRemoveFromCart(RemoveFromCart event, Emitter<CartState> emit) {
-    // Create a deep copy before removing
-    final updatedItems = state.items.map(
-      (key, value) => MapEntry(
-        key,
-        CartItemEntity(
-          id: value.id,
-          name: value.name,
-          description: value.description,
-          price: value.price,
-          quantity: value.quantity,
-          imageUrl: value.imageUrl,
+      // Calculate total items
+      int totalItems = items.values.fold(
+        0,
+        (sum, item) => sum + item.quantity,
+      );
+
+      emit(
+        state.copyWith(
+          items: items,
+          total: total,
+          totalItems: totalItems,
+          isLoading: false,
+          error: null,
         ),
-      ),
-    )..remove(event.itemId);
-
-    emit(state.copyWith(items: updatedItems));
-  }
-
-  void _onUpdateQuantity(UpdateQuantity event, Emitter<CartState> emit) {
-    if (!state.items.containsKey(event.itemId)) return;
-
-    // Create a new map with deep copies of all items
-    final updatedItems = Map<int, CartItemEntity>.fromEntries(
-      state.items.entries.map(
-        (entry) => MapEntry(
-          entry.key,
-          entry.value.copyWith(),
+      );
+    } catch (e) {
+      emit(
+        state.copyWith(
+          items: const {},
+          total: 0,
+          totalItems: 0,
+          isLoading: false,
+          error: e.toString(),
         ),
-      ),
-    );
-
-    if (event.quantity <= 0) {
-      updatedItems.remove(event.itemId);
-    } else {
-      final item = updatedItems[event.itemId]!;
-      updatedItems[event.itemId] = item.copyWith(
-        quantity: event.quantity,
       );
     }
-
-    emit(state.copyWith(items: updatedItems));
   }
 
-  void _onClearCart(ClearCart event, Emitter<CartState> emit) {
-    emit(state.copyWith(items: {}));
+  Future<void> _onAddToCart(AddToCart event, Emitter<CartState> emit) async {
+    try {
+      await _cartRepository.addItem(event.item);
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> _onUpdateQuantity(
+      UpdateQuantity event, Emitter<CartState> emit) async {
+    try {
+      await _cartRepository.updateItemQuantity(event.itemId, event.quantity);
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> _onRemoveFromCart(
+      RemoveFromCart event, Emitter<CartState> emit) async {
+    try {
+      await _cartRepository.removeItem(event.itemId);
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
+  }
+
+  Future<void> _onClearCart(ClearCart event, Emitter<CartState> emit) async {
+    try {
+      await _cartRepository.clearCart();
+    } catch (e) {
+      emit(state.copyWith(error: e.toString()));
+    }
   }
 }
