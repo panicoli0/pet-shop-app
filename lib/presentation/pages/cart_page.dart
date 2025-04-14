@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pets_shop/di/injection.dart';
 import 'package:pets_shop/presentation/bloc/cart/bloc/cart_bloc.dart';
 
 class CartPage extends StatelessWidget {
@@ -7,18 +8,40 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocProvider(
+      create: (context) => getIt<CartBloc>(),
+      child: const CartPageView(),
+    );
+  }
+}
+
+class CartPageView extends StatelessWidget {
+  const CartPageView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final cartBloc = context.read<CartBloc>();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cart'),
         actions: [
           IconButton(
             icon: const Icon(Icons.delete_outline),
-            onPressed: () => context.read<CartBloc>().add(ClearCart()),
+            onPressed: () => cartBloc.add(ClearCart()),
           ),
         ],
       ),
       body: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
+          if (state.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (state.error != null) {
+            return Center(child: Text('Error: ${state.error}'));
+          }
+
           if (state.items.isEmpty) {
             return const Center(
               child: Text('Your cart is empty'),

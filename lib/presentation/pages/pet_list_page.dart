@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pets_shop/di/injection.dart';
 import 'package:pets_shop/domain/entities_DTOs/pet_entity.dart';
 import 'package:pets_shop/presentation/bloc/cart/bloc/cart_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_bloc.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_state.dart';
 import 'package:pets_shop/presentation/bloc/pet_list_event.dart';
+import 'package:pets_shop/presentation/widgets/cart_buttom.dart';
 import 'package:pets_shop/presentation/widgets/pet_item.dart';
 
 class PetListPage extends StatelessWidget {
@@ -12,6 +14,35 @@ class PetListPage extends StatelessWidget {
   final Function()? onCartTapped;
 
   const PetListPage({
+    super.key,
+    this.onPetSelected,
+    this.onCartTapped,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => getIt<PetListBloc>()..add(LoadPets()),
+        ),
+        BlocProvider(
+          create: (context) => getIt<CartBloc>()..add(LoadCart()),
+        ),
+      ],
+      child: PetListView(
+        onPetSelected: onPetSelected,
+        onCartTapped: onCartTapped,
+      ),
+    );
+  }
+}
+
+class PetListView extends StatelessWidget {
+  final Function(PetEntity pet)? onPetSelected;
+  final Function()? onCartTapped;
+
+  const PetListView({
     super.key,
     this.onPetSelected,
     this.onCartTapped,
@@ -70,42 +101,7 @@ class PetListPage extends StatelessWidget {
           return const SizedBox.shrink();
         },
       ),
-      floatingActionButton: BlocBuilder<CartBloc, CartState>(
-        builder: (context, state) {
-          if (state.items.isEmpty) return const SizedBox.shrink();
-
-          return Stack(children: [
-            FloatingActionButton(
-              onPressed: onCartTapped,
-              child: const Icon(Icons.shopping_cart),
-            ),
-            Positioned(
-              right: 6,
-              top: 6,
-              child: Container(
-                padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
-                  color: Colors.pink[500],
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                ),
-                constraints: const BoxConstraints(
-                  minWidth: 16,
-                  minHeight: 16,
-                ),
-                child: Text(
-                  '${state.totalItems}',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 10,
-                    decorationThickness: 0,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ]);
-        },
-      ),
+      floatingActionButton: CartButton(onCartTapped: onCartTapped),
     );
   }
 }
