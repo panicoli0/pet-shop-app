@@ -16,6 +16,8 @@ class PetItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cartBloc = context.read<CartBloc>();
+
     return ListTile(
       leading: ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -27,18 +29,18 @@ class PetItem extends StatelessWidget {
       trailing: IconButton(
         icon: const Icon(Icons.add_shopping_cart),
         onPressed: () {
-          context.read<CartBloc>().add(
-                AddToCart(
-                  CartItemEntity(
-                    id: pet.id,
-                    name: pet.name!,
-                    description: pet.breed!,
-                    price: 29.99,
-                    quantity: 1,
-                    imageUrl: pet.imageUrl!,
-                  ),
-                ),
-              );
+          cartBloc.add(
+            AddToCart(
+              CartItemEntity(
+                id: pet.id,
+                name: pet.name!,
+                description: pet.breed!,
+                price: 29.99,
+                quantity: 1,
+                imageUrl: pet.imageUrl!,
+              ),
+            ),
+          );
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('${pet.name} added to cart'),
